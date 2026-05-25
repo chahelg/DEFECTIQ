@@ -1,0 +1,9 @@
+backend/ml/saved_models/*.index
+backend/ml/saved_models/*.joblib
+backend/ml/saved_models/*.pkl
+backend/ml/saved_models/*.json
+backend/ml/saved_models/*.txt
+**/__pycache__/
+**/*.pyc
+frontend/node_modules/
+frontend/dist/

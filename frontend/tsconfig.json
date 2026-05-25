@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@api/*": ["src/api/*"],
+      "@auth/*": ["src/components/auth/*"],
+      "@ai/*": ["src/components/ai/*"],
+      "@charts/*": ["src/components/charts/*"],
+      "@components/*": ["src/components/*"],
+      "@common/*": ["src/components/common/*"],
+      "@data/*": ["src/data/*"],
+      "@defects/*": ["src/components/defects/*"],
+      "@guards/*": ["src/components/guards/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@layout/*": ["src/components/layout/*"],
+      "@lib/*": ["src/lib/*"],
+      "@pages/*": ["src/pages/*"],
+      "@routes/*": ["src/routes/*"],
+      "@store/*": ["src/store/*"],
+      "@types": ["src/types/index.ts"],
+      "@types/*": ["src/types/*"],
+      "@utils/*": ["src/utils/*"]
+    }
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/components/guards/ProtectedRoute.tsx",
+    "src/components/layout/Layout.tsx",
+    "src/components/ui/**/*",
+    "src/lib/**/*",
+    "src/pages/LoginPage.tsx",
+    "src/services/api.ts",
+    "src/store/authStore.ts",
+    "src/types/phase1.ts"
+  ]
+}
