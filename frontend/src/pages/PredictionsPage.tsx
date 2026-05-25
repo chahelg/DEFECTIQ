@@ -154,22 +154,22 @@ interface MetricCardProps {
 
 function MetricCard({ label, value, delta, tone = 'cyan', icon: Icon }: MetricCardProps) {
   const tones: Record<NonNullable<MetricCardProps['tone']>, string> = {
-    cyan: 'from-cyan-400/15 to-cyan-300/5 text-cyan-200 ring-cyan-300/20',
-    emerald: 'from-emerald-400/15 to-emerald-300/5 text-emerald-200 ring-emerald-300/20',
-    amber: 'from-amber-400/15 to-amber-300/5 text-amber-200 ring-amber-300/20',
-    rose: 'from-rose-400/15 to-rose-300/5 text-rose-200 ring-rose-300/20',
-    violet: 'from-violet-400/15 to-violet-300/5 text-violet-200 ring-violet-300/20',
+    cyan: 'from-cyan-500/35 via-cyan-500/20 to-slate-950/90',
+    emerald: 'from-emerald-500/35 via-emerald-500/20 to-slate-950/90',
+    amber: 'from-amber-500/35 via-amber-500/20 to-slate-950/90',
+    rose: 'from-rose-500/35 via-rose-500/20 to-slate-950/90',
+    violet: 'from-violet-500/35 via-violet-500/20 to-slate-950/90',
   }
 
   return (
-    <Card className={`border-white/10 bg-gradient-to-br ${tones[tone]}`}>
+    <Card className={`kpi-card ${tones[tone]}`}>
       <CardContent className="flex items-start justify-between gap-4 p-6">
         <div>
-          <p className="text-sm text-slate-300">{label}</p>
-          <p className="mt-3 text-3xl font-semibold text-white">{value}</p>
-          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{delta}</p>
+          <p className="kpi-label">{label}</p>
+          <p className="kpi-value">{value}</p>
+          <p className="kpi-detail">{delta}</p>
         </div>
-        <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
+        <div className="kpi-icon-shell">
           <Icon className="h-5 w-5" />
         </div>
       </CardContent>

@@ -84,22 +84,22 @@ export function DefectExplorerPage() {
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="border-white/10 bg-slate-950/70">
+          <Card className="kpi-card from-slate-800/70 via-slate-800/55 to-slate-950/90">
             <CardContent className="p-6">
-              <p className="text-sm text-slate-400">Results</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{defectsQuery.data?.total ?? 0}</p>
+              <p className="kpi-label">Results</p>
+              <p className="kpi-value">{defectsQuery.data?.total ?? 0}</p>
             </CardContent>
           </Card>
-          <Card className="border-white/10 bg-slate-950/70">
+          <Card className="kpi-card from-slate-800/70 via-slate-800/55 to-slate-950/90">
             <CardContent className="p-6">
-              <p className="text-sm text-slate-400">Page Size</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{filters.pageSize}</p>
+              <p className="kpi-label">Page Size</p>
+              <p className="kpi-value">{filters.pageSize}</p>
             </CardContent>
           </Card>
-          <Card className="border-white/10 bg-slate-950/70">
+          <Card className="kpi-card from-slate-800/70 via-slate-800/55 to-slate-950/90">
             <CardContent className="p-6">
-              <p className="text-sm text-slate-400">Current Page</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{currentPage}</p>
+              <p className="kpi-label">Current Page</p>
+              <p className="kpi-value">{currentPage}</p>
             </CardContent>
           </Card>
         </div>
@@ -127,7 +127,7 @@ export function DefectExplorerPage() {
                 <option value="Low">Low</option>
               </Select>
               <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300" />
                 <Input
                   className="pl-10"
                   placeholder="Search number, title, category..."
@@ -172,7 +172,7 @@ export function DefectExplorerPage() {
               </Table>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
               <div className="flex items-center gap-3">
                 <Button
                   disabled={filters.page <= 1}
@@ -226,16 +226,16 @@ export function DefectExplorerPage() {
           </CardHeader>
           <CardContent className="space-y-4 overflow-y-auto">
             {selectedId && selectedDefectQuery.data ? (
-              <div className="space-y-3 text-sm text-slate-300">
+              <div className="space-y-3 text-sm text-slate-200">
                 {Object.entries(selectedDefectQuery.data).map(([key, value]) => (
                   <div key={key} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{key.split('_').join(' ')}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{key.split('_').join(' ')}</p>
                     <p className="mt-1 break-words text-slate-100">{String(value ?? 'N/A')}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-8 text-center text-sm text-slate-400">
+              <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-8 text-center text-sm text-slate-300">
                 Select a defect from the table to see all fields.
               </div>
             )}

@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { BrainCircuit, LayoutDashboard, MessageSquare, Menu, LogOut, Search, Sparkles, Upload, X } from 'lucide-react'
+import { AlertTriangle, BrainCircuit, Clock3, GitBranch, LayoutDashboard, Menu, LogOut, Search, Upload, X } from 'lucide-react'
 import clsx from 'clsx'
 import { useAuthStore } from '@/store/authStore'
 
 const navItems = [
+  { label: 'Manager Command Center', to: '/command-center', icon: LayoutDashboard },
   { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+  { label: 'SLA Risk Center', to: '/sla-risk', icon: AlertTriangle },
+  { label: 'Workflow Intelligence', to: '/workflow-intelligence', icon: GitBranch },
+  { label: 'Workload Intelligence', to: '/workload-intelligence', icon: BrainCircuit },
+  { label: 'Root Cause Analysis', to: '/root-cause-analysis', icon: AlertTriangle },
+  { label: 'Ageing Defects', to: '/ageing-defects', icon: Clock3 },
   { label: 'Defect Explorer', to: '/defects', icon: Search },
-  { label: 'Predictions', to: '/predictions', icon: BrainCircuit },
-  { label: 'NLP Intelligence', to: '/nlp', icon: Sparkles },
-  { label: 'Insights', to: '/insights', icon: Sparkles },
-  { label: 'Chat Assistant', to: '/chat', icon: MessageSquare },
   { label: 'Upload', to: '/upload', icon: Upload },
 ]
 
@@ -35,7 +37,7 @@ export function Layout() {
         >
           <div className="flex items-center justify-between gap-3 lg:justify-start">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">DefectIQ AI</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">DefectIQ ODI</p>
               <h1 className="mt-1 text-2xl font-semibold text-white">Control Center</h1>
             </div>
             <button
@@ -90,8 +92,8 @@ export function Layout() {
                 <Menu className="h-5 w-5" />
               </button>
               <div className="min-w-0">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Operational Analytics</p>
-                <h2 className="truncate text-lg font-semibold text-white">DefectIQ AI</h2>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Operational Decision Intelligence</p>
+                <h2 className="truncate text-lg font-semibold text-white">DEFECTIQ Platform</h2>
               </div>
               <button
                 className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-white/10"

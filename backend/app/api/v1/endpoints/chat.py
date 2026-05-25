@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from uuid import UUID
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
@@ -13,6 +14,13 @@ from app.models import ChatHistory
 from app.services.chat_service import ChatService
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
+
+
+def _parse_user_uuid(user_id: str) -> UUID:
+    try:
+        return UUID(user_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail="Invalid authentication context") from exc
 
 
 class ChatMessageRequest(BaseModel):
@@ -27,7 +35,8 @@ async def message(payload: ChatMessageRequest, session=Depends(db_session), user
 
 @router.get("/history")
 async def history(conversation_id: str | None = None, session=Depends(db_session), user_id: str = Depends(current_user_id)) -> dict[str, Any]:
-    query = select(ChatHistory).where(ChatHistory.user_id == user_id)
+    user_uuid = _parse_user_uuid(user_id)
+    query = select(ChatHistory).where(ChatHistory.user_id == user_uuid)
     if conversation_id:
         query = query.where(ChatHistory.conversation_id == conversation_id)
     result = await session.execute(query.order_by(ChatHistory.created_at.asc()))
@@ -46,7 +55,8 @@ async def history(conversation_id: str | None = None, session=Depends(db_session
 
 @router.get("/suggestions")
 async def suggestions(query: str = "", session=Depends(db_session), user_id: str = Depends(current_user_id)) -> dict[str, Any]:
-    recent = await session.execute(select(ChatHistory).where(ChatHistory.user_id == user_id).order_by(ChatHistory.created_at.desc()).limit(3))
+    user_uuid = _parse_user_uuid(user_id)
+    recent = await session.execute(select(ChatHistory).where(ChatHistory.user_id == user_uuid).order_by(ChatHistory.created_at.desc()).limit(3))
     prompts = [item.content[:80] for item in recent.scalars().all()]
     if query:
         prompts.insert(0, f"Ask about {query}")

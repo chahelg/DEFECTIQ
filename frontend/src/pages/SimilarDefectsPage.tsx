@@ -163,10 +163,10 @@ export function SimilarDefectsPage() {
 
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-3xl border border-slate-700/80 bg-slate-950/60 p-4">
-      <p className="text-sm text-slate-300">{label}</p>
-      <p className="mt-2 text-3xl font-semibold text-foreground">{value}</p>
-      <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">{detail}</p>
+    <div className="kpi-card from-slate-800/70 via-slate-800/55 to-slate-950/90 rounded-3xl p-4">
+      <p className="kpi-label">{label}</p>
+      <p className="kpi-value">{value}</p>
+      <p className="kpi-detail">{detail}</p>
     </div>
   )
 }

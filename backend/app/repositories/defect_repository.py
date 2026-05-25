@@ -18,6 +18,14 @@ class DefectRepository(BaseRepository[Defect]):
         super().__init__(session, Defect)
 
     @staticmethod
+    def _to_utc(value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            return value.replace(tzinfo=UTC)
+        return value.astimezone(UTC)
+
+    @staticmethod
     def _has_value(value: object) -> bool:
         if value is None:
             return False
@@ -214,9 +222,11 @@ class DefectRepository(BaseRepository[Defect]):
         resolution_rows = (await self.session.execute(resolution_stmt)).all()
         resolution_hours: list[float] = []
         for opened_at, resolved_at in resolution_rows:
-            if opened_at is None or resolved_at is None:
+            normalized_opened = self._to_utc(opened_at)
+            normalized_resolved = self._to_utc(resolved_at)
+            if normalized_opened is None or normalized_resolved is None:
                 continue
-            hours = (resolved_at - opened_at).total_seconds() / 3600.0
+            hours = (normalized_resolved - normalized_opened).total_seconds() / 3600.0
             resolution_hours.append(max(hours, 0.0))
 
         avg_resolution_hours = sum(resolution_hours) / len(resolution_hours) if resolution_hours else 0.0

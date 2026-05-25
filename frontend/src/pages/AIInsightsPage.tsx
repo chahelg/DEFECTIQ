@@ -71,10 +71,10 @@ export function AIInsightsPage() {
 
 function InsightMetric({ label, value }: { label: string; value: string }) {
   return (
-    <Card>
+    <Card className="kpi-card from-slate-800/70 via-slate-800/55 to-slate-950/90">
       <CardContent className="p-6">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-2 text-3xl font-semibold text-foreground">{value}</p>
+        <p className="kpi-label">{label}</p>
+        <p className="kpi-value">{value}</p>
       </CardContent>
     </Card>
   )

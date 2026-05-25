@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Cell,
   Legend,
@@ -99,6 +101,37 @@ export function DashboardPage() {
 
   const kpis = kpisQuery.data
   const slaBreachedPct = Math.max(0, 100 - kpis.sla_compliance_pct)
+  const topPriority = [...priorityQuery.data].sort((left, right) => right.value - left.value)[0]
+  const topStatus = [...statusQuery.data].sort((left, right) => right.value - left.value)[0]
+
+  const actionSignals = [
+    {
+      key: 'Open Defects',
+      value: kpis.open_defects,
+      action: 'Run focused triage on the top open clusters.',
+    },
+    {
+      key: 'Critical Defects',
+      value: kpis.critical_count,
+      action: 'Assign incident leads and 4-hour checkpoints.',
+    },
+    {
+      key: 'SLA Breaches',
+      value: kpis.sla_breached_count,
+      action: 'Escalate breached queue with owner accountability.',
+    },
+    {
+      key: 'Reopen Pressure',
+      value: Number(kpis.reopen_rate.toFixed(1)),
+      action: 'Audit root causes for repeatedly reopened items.',
+    },
+  ]
+
+  const businessActions = [
+    `Highest defect concentration is '${topPriority?.name ?? 'N/A'}' priority — allocate extra resolver capacity there first.`,
+    `Dominant status is '${topStatus?.name ?? 'N/A'}' — clear this stage bottleneck to improve flow velocity.`,
+    `SLA breach rate is ${slaBreachedPct.toFixed(1)}% — enforce urgent queue review every 4 hours.`,
+  ]
 
   return (
     <div className="space-y-6">
@@ -132,7 +165,7 @@ export function DashboardPage() {
                   tickFormatter={(value: string | number) => String(value).slice(5)}
                 />
                 <YAxis tick={{ fill: '#cbd5e1', fontSize: 12 }} />
-                <Tooltip contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.1)' }} />
+                <Tooltip content={<ChartTooltip />} />
                 <Line dataKey="count" stroke="#22d3ee" strokeWidth={3} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -152,8 +185,8 @@ export function DashboardPage() {
                       <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.1)' }} />
-                  <Legend />
+                  <Tooltip content={<ChartTooltip />} />
+                  <Legend wrapperStyle={{ color: '#e2e8f0', fontSize: '12px' }} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
@@ -171,14 +204,80 @@ export function DashboardPage() {
                       <Cell key={entry.name} fill={PIE_COLORS[(index + 2) % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: '#020617', border: '1px solid rgba(255,255,255,0.1)' }} />
-                  <Legend />
+                  <Tooltip content={<ChartTooltip />} />
+                  <Legend wrapperStyle={{ color: '#e2e8f0', fontSize: '12px' }} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
+        <Card className="border-white/10 bg-slate-950/70">
+          <CardHeader>
+            <CardTitle>Operational Action Signals</CardTitle>
+            <CardDescription>Business-facing indicators with direct intervention guidance.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={actionSignals}>
+                <CartesianGrid stroke="rgba(148,163,184,0.15)" strokeDasharray="3 3" />
+                <XAxis dataKey="key" tick={{ fill: '#cbd5e1', fontSize: 11 }} interval={0} angle={-12} textAnchor="end" height={60} />
+                <YAxis tick={{ fill: '#cbd5e1', fontSize: 12 }} />
+                <Tooltip content={<ChartTooltip />} />
+                <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#22d3ee" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="border-white/10 bg-slate-950/70">
+          <CardHeader>
+            <CardTitle>Recommended Business Actions</CardTitle>
+            <CardDescription>Immediate actions derived from live operational metrics.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {businessActions.map((item) => (
+              <div key={item} className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-3 text-sm text-cyan-100">
+                {item}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: Array<{ name?: string; value?: number | string; color?: string; payload?: Record<string, unknown> }>
+  label?: string
+}
+
+function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
+  if (!active || !payload?.length) {
+    return null
+  }
+
+  const detailText = typeof payload[0]?.payload?.action === 'string' ? payload[0].payload.action : null
+
+  return (
+    <div className="max-w-xs rounded-xl border border-white/15 bg-slate-950/95 px-3 py-2 text-xs text-slate-100 shadow-xl">
+      {label ? <p className="mb-1 font-semibold text-white">{label}</p> : null}
+      <div className="space-y-1">
+        {payload.map((entry) => (
+          <div key={`${entry.name}-${entry.value}`} className="flex items-center justify-between gap-3">
+            <span className="inline-flex items-center gap-2 text-slate-200">
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color ?? '#22d3ee' }} />
+              {entry.name}
+            </span>
+            <span className="font-semibold text-white">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+      {detailText ? <p className="mt-2 text-[11px] text-cyan-100">{detailText}</p> : null}
     </div>
   )
 }
@@ -192,21 +291,21 @@ interface MetricCardProps {
 
 function MetricCard({ label, value, tone = 'cyan', icon: Icon }: MetricCardProps) {
   const tones: Record<NonNullable<MetricCardProps['tone']>, string> = {
-    cyan: 'from-cyan-400/15 to-cyan-300/5 text-cyan-200 ring-cyan-300/20',
-    emerald: 'from-emerald-400/15 to-emerald-300/5 text-emerald-200 ring-emerald-300/20',
-    amber: 'from-amber-400/15 to-amber-300/5 text-amber-200 ring-amber-300/20',
-    rose: 'from-rose-400/15 to-rose-300/5 text-rose-200 ring-rose-300/20',
-    violet: 'from-violet-400/15 to-violet-300/5 text-violet-200 ring-violet-300/20',
+    cyan: 'from-cyan-500/35 via-cyan-500/20 to-slate-950/90',
+    emerald: 'from-emerald-500/35 via-emerald-500/20 to-slate-950/90',
+    amber: 'from-amber-500/35 via-amber-500/20 to-slate-950/90',
+    rose: 'from-rose-500/35 via-rose-500/20 to-slate-950/90',
+    violet: 'from-violet-500/35 via-violet-500/20 to-slate-950/90',
   }
 
   return (
-    <Card className={`border-white/10 bg-gradient-to-br ${tones[tone]}`}>
+    <Card className={`kpi-card ${tones[tone]}`}>
       <CardContent className="flex items-start justify-between gap-4 p-6">
         <div>
-          <p className="text-sm text-slate-300">{label}</p>
-          <p className="mt-3 text-3xl font-semibold text-white">{value}</p>
+          <p className="kpi-label">{label}</p>
+          <p className="kpi-value">{value}</p>
         </div>
-        <div className="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
+        <div className="kpi-icon-shell">
           <Icon className="h-5 w-5" />
         </div>
       </CardContent>
